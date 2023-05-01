@@ -30,10 +30,11 @@ console.log('örnek görev:', ilkiniDon(['as','sa'],function(metin){return metin
   Aşağıdaki skor1 ve skor2 kodlarını inceleyiniz ve aşağıdaki soruları altına not alarak cevaplayın
   
   1. skor1 ve skor2 arasındaki fark nedir?
-  
+  skor1 ve skor2 arasındaki fark, skor1'in closure kullanmasıdır. skor1 içinde skorArtirici() adlı bir fonksiyon çağrılmaktadır ve bu fonksiyon, skor değişkenine ulaşabilmek için bir closure kullanmaktadır. skor2 ise global bir değişken olan skor'u kullanmaktadır.
   2. Hangisi bir closure kullanmaktadır? Nasıl tarif edebilirsin? (yarınki derste öğreneceksin :) )
-  
+  skor1 bir closure kullanmaktadır. Fonksiyon skorArtirici() içindeki skor değişkeni, skorGuncelle() adlı iç fonksiyon tarafından kullanılabilmektedir. Bu şekilde, skorGuncelle() fonksiyonu dışarıdan gelen değerlere kapalıdır ve sadece skorArtirici() fonksiyonu içindeki skor değişkenine erişebilmektedir.
   3. Hangi durumda skor1 tercih edilebilir? Hangi durumda skor2 daha mantıklıdır?
+  skor1, bir oyun skoru gibi bir durumda tercih edilebilir. Bu sayede, skor değişkeni, sadece skorGuncelle() fonksiyonu tarafından değiştirilebilir ve dışarıdan müdahale edilemez. skor2 ise daha basit durumlarda tercih edilebilir, çünkü global değişkenlerin kullanımı bazen gereksiz karmaşıklığa sebep olabilir.
 */
 
 // skor1 kodları
@@ -64,9 +65,11 @@ Aşağıdaki takimSkoru() fonksiyonununda aşağıdakileri yapınız:
 Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyonu olarak da kullanılacak
 */
 
-function takimSkoru(/*Kodunuzu buraya yazınız*/){
-    /*Kodunuzu buraya yazınız*/
+function takimSkoru(){
+  let sayi = Math.round(Math.random() * 15) + 10;
+  return sayi;
 }
+
 
 
 
@@ -86,10 +89,15 @@ Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
 }
 */ 
 
-function macSonucu(/*Kodunuzu buraya yazınız*/){
-  /*Kodunuzu buraya yazınız*/
+function macSonucu(callback, ceyrekSayisi){
+  let EvSahibi = 0; let KonukTakim = 0;
+  for (let i=0; i < ceyrekSayisi; i++){
+    EvSahibi += callback();
+    KonukTakim += callback();
+  }
+  return {EvSahibi, KonukTakim};
 }
-
+//console.log(macSonucu(takimSkoru, 4))
 
 
 
@@ -109,10 +117,16 @@ Aşağıdaki periyotSkoru() fonksiyonununda aşağıdakileri yapınız:
   */
 
 
-function periyotSkoru(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
-
+function periyotSkoru(callback){
+  let EvSahibi = 0; let KonukTakim = 0;
+    EvSahibi += callback();
+    KonukTakim += callback();
+  
+  return {EvSahibi, KonukTakim};
 }
+//console.log(periyotSkoru(takimSkoru))
+
+
 
 
 /* Zorlayıcı Görev 5: skorTabelasi() 
@@ -146,9 +160,38 @@ MAÇ UZAR ise skorTabelasi(periyotSkoru,takimSkoru,4)
 ] */
 // NOTE: Bununla ilgili bir test yoktur. Eğer logladığınız sonuçlar yukarıdakine benziyor ise tmamlandı sayabilirsiniz.
 
-function skorTabelasi(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
+function skorTabelasi(periyotSkoru,takimSkoru,ceyrekSayisi) {
+let skorlar = [];
+let evSahibiToplam = 0;
+let konukTakimToplam = 0;
+  for (let i=1; i <= ceyrekSayisi; i++){
+    let obj = periyotSkoru(takimSkoru)
+    skorlar = [...skorlar, `${i}. Periyot: Ev Sahibi ${obj.EvSahibi } - Konuk Takım ${obj.KonukTakim }`];
+    evSahibiToplam += obj.EvSahibi;
+    konukTakimToplam += obj.KonukTakim;
+  }
+
+  if(evSahibiToplam == konukTakimToplam){
+    let uzatma = 1;
+    let uzatmaSkoru = 1;
+    while(evSahibiToplam == konukTakimToplam){
+      uzatmaSkoru = periyotSkoru(takimSkoru);
+      skorlar = [...skorlar, `${uzatma}. Uzatma: Ev Sahibi ${uzatmaSkoru.EvSahibi } - Konuk Takım ${uzatmaSkoru.KonukTakim }`];
+      evSahibiToplam += uzatmaSkoru.EvSahibi;
+      konukTakimToplam += uzatmaSkoru.KonukTakim;
+      uzatma++;
+    }
+    skorlar = [...skorlar, `Maç Sonucu: Ev Sahibi ${evSahibiToplam } - Konuk Takım ${konukTakimToplam }`];
+    return skorlar;
+  }else{
+    skorlar = [...skorlar, `Maç Sonucu: Ev Sahibi ${evSahibiToplam } - Konuk Takım ${konukTakimToplam }`];
+    return skorlar;
+  }
+  
+
 }
+console.log(skorTabelasi(periyotSkoru,takimSkoru,4));
+
 
 
 
