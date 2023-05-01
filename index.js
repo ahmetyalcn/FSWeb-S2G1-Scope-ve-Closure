@@ -66,7 +66,7 @@ Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyon
 */
 
 function takimSkoru(){
-  let sayi = Math.round(Math.random() * 15) + 10;
+  let sayi = Math.floor(Math.random() * 16) + 10;
   return sayi;
 }
 
@@ -171,22 +171,17 @@ let konukTakimToplam = 0;
     konukTakimToplam += obj.KonukTakim;
   }
 
-  if(evSahibiToplam == konukTakimToplam){
     let uzatma = 1;
-    let uzatmaSkoru = 1;
     while(evSahibiToplam == konukTakimToplam){
-      uzatmaSkoru = periyotSkoru(takimSkoru);
-      skorlar = [...skorlar, `${uzatma}. Uzatma: Ev Sahibi ${uzatmaSkoru.EvSahibi } - Konuk Takım ${uzatmaSkoru.KonukTakim }`];
-      evSahibiToplam += uzatmaSkoru.EvSahibi;
-      konukTakimToplam += uzatmaSkoru.KonukTakim;
+      let obj = periyotSkoru(takimSkoru);
+      skorlar = [...skorlar, `${uzatma}. Uzatma: Ev Sahibi ${obj.EvSahibi } - Konuk Takım ${obj.KonukTakim }`];
+      evSahibiToplam += obj.EvSahibi;
+      konukTakimToplam += obj.KonukTakim;
       uzatma++;
     }
     skorlar = [...skorlar, `Maç Sonucu: Ev Sahibi ${evSahibiToplam } - Konuk Takım ${konukTakimToplam }`];
     return skorlar;
-  }else{
-    skorlar = [...skorlar, `Maç Sonucu: Ev Sahibi ${evSahibiToplam } - Konuk Takım ${konukTakimToplam }`];
-    return skorlar;
-  }
+  
   
 
 }
